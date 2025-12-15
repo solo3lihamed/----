@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "الصفحة غير موجودة" %} - عَبَق{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-20">
+    <div class="max-w-2xl mx-auto text-center">
+        <div data-aos="zoom-in">
+            <div class="text-9xl font-bold gradient-text mb-6">404</div>
+            <i class="fas fa-search text-6xl text-gray-300 mb-6"></i>
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">
+                {% trans "عذراً، الصفحة غير موجودة" %}
+            </h1>
+            <p class="text-xl text-gray-600 mb-8">
+                {% trans "الصفحة التي تبحث عنها غير موجودة أو تم نقلها" %}
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'home' %}" class="btn-gradient text-white px-8 py-4 rounded-lg text-lg font-bold inline-flex items-center justify-center">
+                    <i class="fas fa-home {% if LANGUAGE_CODE == 'ar' %}ml-2{% else %}mr-2{% endif %}"></i>
+                    {% trans "العودة للرئيسية" %}
+                </a>
+                <a href="{% url 'perfumes:list' %}" class="bg-white text-purple-600 border-2 border-purple-600 px-8 py-4 rounded-lg text-lg font-bold hover:bg-purple-50 transition inline-flex items-center justify-center">
+                    <i class="fas fa-shopping-bag {% if LANGUAGE_CODE == 'ar' %}ml-2{% else %}mr-2{% endif %}"></i>
+                    {% trans "تصفح المنتجات" %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

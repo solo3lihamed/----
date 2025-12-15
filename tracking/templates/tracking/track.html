@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load dict_filters %}
+
+{% block title %}{% trans "تتبع الشحنة" %} - عَبَق{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-5xl font-bold gradient-text mb-8 text-center" data-aos="fade-up">
+        <i class="fas fa-truck"></i> {% trans "تتبع الشحنة" %}
+    </h1>
+    
+    <!-- Tracking Form -->
+    <div class="max-w-2xl mx-auto mb-12" data-aos="fade-up" data-aos-delay="200">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <h2 class="text-2xl font-bold gradient-text mb-6 text-center">
+                {% trans "أدخل رمز التتبع" %}
+            </h2>
+            
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                <div class="flex gap-4">
+                    <input type="text" name="tracking_code" 
+                           class="flex-1 px-6 py-4 border-2 border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-xl text-center font-bold"
+                           placeholder="{% trans 'مثال: ABC123XYZ4' %}"
+                           value="{{ request.POST.tracking_code }}"
+                           required>
+                    <button type="submit" class="btn-gradient text-white px-8 py-4 rounded-lg text-xl font-bold">
+                        <i class="fas fa-search"></i> {% trans "تتبع" %}
+                    </button>
+                </div>
+            </form>
+            
+            <div class="mt-6 text-center text-gray-600">
+                <p class="flex items-center justify-center gap-2">
+                    <i class="fas fa-info-circle"></i>
+                    <span>{% trans "يمكنك العثور على رمز التتبع في رسالة تأكيد الطلب" %}</span>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    {% if order %}
+    <!-- Order Info -->
+    <div class="max-w-4xl mx-auto mb-12" data-aos="fade-up">
+        <div class="bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl shadow-lg p-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div>
+                    <p class="text-gray-600 mb-2">{% trans "رقم الطلب" %}</p>
+                    <p class="text-2xl font-bold text-purple-600">{{ order.order_number }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-600 mb-2">{% trans "تاريخ الطلب" %}</p>
+                    <p class="text-xl font-bold text-gray-800">{{ order.created_at|date:"Y/m/d" }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-600 mb-2">{% trans "المبلغ الإجمالي" %}</p>
+                    <p class="text-2xl font-bold text-green-600">{{ order.total_amount }} {% trans "ريال" %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tracking Timeline -->
+    <div class="max-w-4xl mx-auto" data-aos="fade-up" data-aos-delay="200">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <h2 class="text-3xl font-bold gradient-text mb-8 text-center">
+                {% trans "حالة الشحنة" %}
+            </h2>
+            
+            <!-- Progress Steps -->
+            <div class="relative">
+                <!-- Progress Line -->
+                <div class="absolute top-12 {% if LANGUAGE_CODE == 'ar' %}right{% else %}left{% endif %}-0 w-full h-2 bg-gray-200" 
+                     style="z-index: 0;">
+                    <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-1000"
+                         style="width: {% if current_status_index >= 0 %}{{ current_status_index|add:'1'|multiply:100|divide:6 }}{% else %}0{% endif %}%;"></div>
+                </div>
+                
+                <!-- Steps -->
+                <div class="relative grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" style="z-index: 1;">
+                    {% for status in all_statuses %}
+                    {% with index=forloop.counter0 %}
+                    <div class="text-center" data-aos="fade-up" data-aos-delay="{{ index|multiply:100 }}">
+                        <!-- Step Circle -->
+                        <div class="mb-4">
+                            <div class="w-24 h-24 mx-auto rounded-full flex items-center justify-center text-3xl
+                                        {% if index <= current_status_index %}
+                                            bg-gradient-to-br from-purple-500 to-pink-500 text-white transform scale-110 shadow-xl
+                                        {% elif index == current_status_index|add:'1' %}
+                                            bg-purple-200 text-purple-600 animate-pulse
+                                        {% else %}
+                                            bg-gray-200 text-gray-400
+                                        {% endif %}
+                                        transition-all duration-500">
+                                <i class="fas {{ status_icons|get_item:status }}"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Step Label -->
+                        <div class="px-2">
+                            <p class="font-bold text-sm
+                                      {% if index <= current_status_index %}
+                                          text-purple-600
+                                      {% else %}
+                                          text-gray-600
+                                      {% endif %}">
+                                {% if LANGUAGE_CODE == 'ar' %}
+                                    {{ status_labels_ar|get_item:status }}
+                                {% else %}
+                                    {{ status_labels_en|get_item:status }}
+                                {% endif %}
+                            </p>
+                            
+                            {% if index == current_status_index %}
+                            <span class="inline-block mt-2 bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-bold">
+                                <i class="fas fa-circle text-xs"></i> {% trans "الحالة الحالية" %}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endwith %}
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Current Status Card -->
+            <div class="mt-12 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl p-6">
+                <div class="flex items-center gap-4">
+                    <div class="bg-white rounded-full p-4">
+                        <i class="fas {{ status_icons|get_item:order.status }} text-4xl text-purple-600"></i>
+                    </div>
+                    <div class="flex-grow">
+                        <p class="text-gray-600 mb-1">{% trans "الحالة الحالية" %}</p>
+                        <p class="text-2xl font-bold gradient-text">
+                            {% if LANGUAGE_CODE == 'ar' %}
+                                {{ order.get_status_display_ar }}
+                            {% else %}
+                                {{ order.get_status_display_en }}
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Status History -->
+            {% if status_history %}
+            <div class="mt-8">
+                <h3 class="text-xl font-bold gradient-text mb-4">
+                    <i class="fas fa-history"></i> {% trans "سجل التحديثات" %}
+                </h3>
+                
+                <div class="space-y-3">
+                    {% for status in status_history %}
+                    <div class="bg-gray-50 rounded-lg p-4 flex items-start gap-4">
+                        <div class="bg-purple-500 text-white rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">
+                            <i class="fas {{ status_icons|get_item:status.status }}"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <p class="font-bold text-gray-800">
+                                {% if LANGUAGE_CODE == 'ar' %}
+                                    {{ status.status_ar }}
+                                {% else %}
+                                    {{ status.status_en }}
+                                {% endif %}
+                            </p>
+                            <p class="text-sm text-gray-600">
+                                <i class="fas fa-clock"></i> {{ status.created_at|date:"Y/m/d H:i" }}
+                            </p>
+                            {% if status.notes %}
+                            <p class="text-sm text-gray-600 mt-1">{{ status.notes }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Contact Info -->
+            <div class="mt-8 bg-blue-100 border border-blue-400 rounded-lg p-6">
+                <p class="text-blue-800 font-bold mb-2">
+                    <i class="fas fa-phone"></i> {% trans "هل لديك استفسار؟" %}
+                </p>
+                <p class="text-blue-700">
+                    {% trans "تواصل معنا على الرقم" %}: <span class="font-bold">+966 50 123 4567</span>
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    /* Custom animation for pulse effect */
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+    
+    .animate-pulse {
+        animation: pulse 2s infinite;
+    }
+</style>
+{% endblock %}
+

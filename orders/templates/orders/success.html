@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "تم إنشاء الطلب بنجاح" %} - عَبَق{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-16">
+    <div class="max-w-3xl mx-auto">
+        <!-- Success Message -->
+        <div class="text-center mb-12" data-aos="zoom-in">
+            <div class="inline-block bg-green-100 rounded-full p-6 mb-6">
+                <i class="fas fa-check-circle text-6xl text-green-500"></i>
+            </div>
+            <h1 class="text-5xl font-bold gradient-text mb-4">
+                {% trans "تم إنشاء الطلب بنجاح!" %}
+            </h1>
+            <p class="text-xl text-gray-600">
+                {% trans "شكراً لك على طلبك من عَبَق" %}
+            </p>
+        </div>
+        
+        <!-- Order Details -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-8" data-aos="fade-up">
+            <h2 class="text-2xl font-bold gradient-text mb-6">
+                <i class="fas fa-info-circle"></i> {% trans "تفاصيل الطلب" %}
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-purple-50 rounded-lg p-4">
+                    <p class="text-gray-600 mb-1">{% trans "رقم الطلب" %}</p>
+                    <p class="text-2xl font-bold text-purple-600">{{ order.order_number }}</p>
+                </div>
+                
+                <div class="bg-pink-50 rounded-lg p-4">
+                    <p class="text-gray-600 mb-1">{% trans "رمز التتبع" %}</p>
+                    <p class="text-2xl font-bold text-pink-600">{{ order.tracking_code }}</p>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                <h3 class="font-bold text-gray-800 mb-4">{% trans "معلومات التواصل" %}</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
+                    <div>
+                        <p class="font-bold">{% trans "الاسم" %}:</p>
+                        <p>{{ order.customer_name }}</p>
+                    </div>
+                    <div>
+                        <p class="font-bold">{% trans "الهاتف" %}:</p>
+                        <p>{{ order.phone }}</p>
+                    </div>
+                    {% if order.email %}
+                    <div>
+                        <p class="font-bold">{% trans "البريد الإلكتروني" %}:</p>
+                        <p>{{ order.email }}</p>
+                    </div>
+                    {% endif %}
+                    <div>
+                        <p class="font-bold">{% trans "المدينة" %}:</p>
+                        <p>{{ order.city }}</p>
+                    </div>
+                    <div class="md:col-span-2">
+                        <p class="font-bold">{% trans "العنوان" %}:</p>
+                        <p>{{ order.address }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
+                <p class="text-yellow-800 flex items-center gap-2">
+                    <i class="fas fa-money-bill-wave text-xl"></i>
+                    <span class="font-bold">{% trans "طريقة الدفع" %}: {% trans "الدفع عند الاستلام" %}</span>
+                </p>
+            </div>
+            
+            <div class="text-center">
+                <p class="text-3xl font-bold text-purple-600 mb-2">
+                    {{ order.total_amount }} {% trans "ريال" %}
+                </p>
+                <p class="text-gray-600">{% trans "المبلغ الإجمالي" %}</p>
+            </div>
+        </div>
+        
+        <!-- Next Steps -->
+        <div class="bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl shadow-lg p-8 mb-8" data-aos="fade-up" data-aos-delay="200">
+            <h2 class="text-2xl font-bold gradient-text mb-6">
+                <i class="fas fa-clipboard-list"></i> {% trans "الخطوات التالية" %}
+            </h2>
+            
+            <div class="space-y-4">
+                <div class="flex items-start gap-4">
+                    <div class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">
+                        1
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-800">{% trans "مراجعة الطلب" %}</p>
+                        <p class="text-gray-600">{% trans "سنقوم بمراجعة طلبك والتأكد من توفر جميع المنتجات" %}</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start gap-4">
+                    <div class="bg-pink-500 text-white rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">
+                        2
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-800">{% trans "التواصل معك" %}</p>
+                        <p class="text-gray-600">{% trans "سيتصل بك فريقنا لتأكيد الطلب والتفاصيل" %}</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start gap-4">
+                    <div class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0 font-bold">
+                        3
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-800">{% trans "الشحن والتوصيل" %}</p>
+                        <p class="text-gray-600">{% trans "سنقوم بشحن طلبك وتوصيله إلى عنوانك" %}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tracking Info -->
+        <div class="bg-blue-100 border border-blue-400 rounded-lg p-6 mb-8" data-aos="fade-up" data-aos-delay="400">
+            <p class="text-blue-800 flex items-center gap-2 mb-3">
+                <i class="fas fa-truck text-xl"></i>
+                <span class="font-bold">{% trans "تتبع شحنتك" %}</span>
+            </p>
+            <p class="text-blue-700 mb-4">
+                {% trans "استخدم رمز التتبع التالي لمتابعة حالة شحنتك" %}:
+            </p>
+            <div class="bg-white rounded-lg p-4 text-center">
+                <p class="text-3xl font-bold text-blue-600 mb-2">{{ order.tracking_code }}</p>
+                <a href="{% url 'tracking:track' %}" class="text-blue-600 hover:underline">
+                    {% trans "تتبع الشحنة الآن" %} <i class="fas fa-arrow-{% if LANGUAGE_CODE == 'ar' %}left{% else %}right{% endif %}"></i>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center" data-aos="fade-up" data-aos-delay="600">
+            <a href="{% url 'tracking:track' %}" class="btn-gradient text-white px-8 py-4 rounded-lg text-lg font-bold text-center">
+                <i class="fas fa-truck"></i> {% trans "تتبع الشحنة" %}
+            </a>
+            <a href="{% url 'perfumes:list' %}" class="bg-white text-purple-600 border-2 border-purple-600 px-8 py-4 rounded-lg text-lg font-bold text-center hover:bg-purple-50 transition">
+                <i class="fas fa-shopping-bag"></i> {% trans "متابعة التسوق" %}
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

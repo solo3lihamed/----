@@ -1,0 +1,195 @@
+/* تحسينات وتأثيرات إضافية */
+
+/* Loading animation */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(139, 92, 246, 0.3);
+    border-radius: 50%;
+    border-top-color: #8B5CF6;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Hover effects for product cards */
+.product-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-card:hover {
+    transform: translateY(-8px) scale(1.02);
+}
+
+/* Smooth transitions */
+* {
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+/* Button hover effects */
+.btn-hover {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-hover::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-hover:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+/* Floating animation for icons */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.float {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Shimmer effect */
+.shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Fade in animations */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scale on hover */
+.scale-hover {
+    transition: transform 0.3s ease;
+}
+
+.scale-hover:hover {
+    transform: scale(1.1);
+}
+
+/* Ripple effect */
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.ripple:active::after {
+    width: 200%;
+    height: 200%;
+}
+
+/* Skeleton loading */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s ease-in-out infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Glow effect */
+.glow {
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+    transition: box-shadow 0.3s ease;
+}
+
+.glow:hover {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.8);
+}
+
+/* Smooth scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Focus styles */
+*:focus {
+    outline: 2px solid #8B5CF6;
+    outline-offset: 2px;
+}
+
+/* Image lazy loading */
+img[loading="lazy"] {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+img[loading="lazy"].loaded {
+    opacity: 1;
+}
+
+/* Print styles */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .mobile-hidden {
+        display: none;
+    }
+}
+

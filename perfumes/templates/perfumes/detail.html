@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% if LANGUAGE_CODE == 'ar' %}{{ perfume.name_ar }}{% else %}{{ perfume.name_en }}{% endif %} - عَبَق{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Breadcrumb -->
+    <div class="mb-6 text-gray-600">
+        <a href="{% url 'home' %}" class="hover:text-purple-600">{% trans "الرئيسية" %}</a>
+        <i class="fas fa-chevron-{% if LANGUAGE_CODE == 'ar' %}left{% else %}right{% endif %} mx-2"></i>
+        <a href="{% url 'perfumes:list' %}" class="hover:text-purple-600">{% trans "العطور" %}</a>
+        <i class="fas fa-chevron-{% if LANGUAGE_CODE == 'ar' %}left{% else %}right{% endif %} mx-2"></i>
+        <span class="text-purple-600 font-bold">{% if LANGUAGE_CODE == 'ar' %}{{ perfume.name_ar }}{% else %}{{ perfume.name_en }}{% endif %}</span>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+        <!-- Images -->
+        <div data-aos="fade-right">
+            <div x-data="{ activeImage: '{{ perfume.image.url }}' }">
+                <!-- Main Image -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-4 relative">
+                    <img :src="activeImage" alt="{{ perfume.name_ar }}" class="w-full h-96 object-cover">
+                    {% if perfume.discount_price %}
+                    <span class="absolute top-4 {% if LANGUAGE_CODE == 'ar' %}left-4{% else %}right-4{% endif %} bg-red-500 text-white px-4 py-2 rounded-full text-lg font-bold badge-pulse">
+                        -{{ perfume.get_discount_percentage }}%
+                    </span>
+                    {% endif %}
+                    {% if not perfume.in_stock %}
+                    <div class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
+                        <span class="text-white text-3xl font-bold">{% trans "نفذت الكمية" %}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Thumbnails -->
+                <div class="grid grid-cols-3 gap-4">
+                    <div @click="activeImage = '{{ perfume.image.url }}'" 
+                         class="cursor-pointer border-2 border-purple-600 rounded-lg overflow-hidden">
+                        <img src="{{ perfume.image.url }}" alt="{{ perfume.name_ar }}" class="w-full h-24 object-cover">
+                    </div>
+                    {% if perfume.image2 %}
+                    <div @click="activeImage = '{{ perfume.image2.url }}'" 
+                         class="cursor-pointer border-2 border-gray-300 hover:border-purple-600 rounded-lg overflow-hidden transition">
+                        <img src="{{ perfume.image2.url }}" alt="{{ perfume.name_ar }}" class="w-full h-24 object-cover">
+                    </div>
+                    {% endif %}
+                    {% if perfume.image3 %}
+                    <div @click="activeImage = '{{ perfume.image3.url }}'" 
+                         class="cursor-pointer border-2 border-gray-300 hover:border-purple-600 rounded-lg overflow-hidden transition">
+                        <img src="{{ perfume.image3.url }}" alt="{{ perfume.name_ar }}" class="w-full h-24 object-cover">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Details -->
+        <div data-aos="fade-left">
+            <h1 class="text-4xl font-bold gradient-text mb-4">
+                {% if LANGUAGE_CODE == 'ar' %}{{ perfume.name_ar }}{% else %}{{ perfume.name_en }}{% endif %}
+            </h1>
+            
+            <div class="flex items-center gap-4 mb-6">
+                <div class="bg-purple-100 text-purple-600 px-4 py-2 rounded-full font-bold">
+                    <i class="{{ perfume.category.icon }}"></i>
+                    {% if LANGUAGE_CODE == 'ar' %}{{ perfume.category.name_ar }}{% else %}{{ perfume.category.name_en }}{% endif %}
+                </div>
+                <div class="bg-pink-100 text-pink-600 px-4 py-2 rounded-full font-bold">
+                    <i class="fas fa-award"></i> {{ perfume.brand.name }}
+                </div>
+            </div>
+            
+            <div class="bg-gray-100 rounded-lg p-4 mb-6">
+                <div class="flex items-center gap-4">
+                    <i class="fas fa-spray-can text-3xl text-purple-600"></i>
+                    <div>
+                        <p class="text-gray-600">{% trans "الحجم" %}</p>
+                        <p class="text-2xl font-bold">{{ perfume.size }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                {% if perfume.discount_price %}
+                <div class="flex items-center gap-4">
+                    <span class="text-5xl font-bold text-purple-600">{{ perfume.discount_price }} {% trans "ريال" %}</span>
+                    <span class="text-2xl text-gray-400 line-through">{{ perfume.price }} {% trans "ريال" %}</span>
+                </div>
+                <p class="text-green-600 font-bold mt-2">
+                    <i class="fas fa-tag"></i> {% trans "وفر" %} {{ perfume.price|add:"-"|add:perfume.discount_price }} {% trans "ريال" %}
+                </p>
+                {% else %}
+                <span class="text-5xl font-bold text-purple-600">{{ perfume.price }} {% trans "ريال" %}</span>
+                {% endif %}
+            </div>
+            
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
+                <p class="text-yellow-800 flex items-center gap-2">
+                    <i class="fas fa-info-circle"></i>
+                    <span class="font-bold">{% trans "الدفع عند الاستلام متاح" %}</span>
+                </p>
+            </div>
+            
+            {% if perfume.in_stock %}
+            <form method="post" action="{% url 'cart:add' perfume.id %}" x-data="{ quantity: 1 }">
+                {% csrf_token %}
+                <div class="flex items-center gap-4 mb-6">
+                    <label class="font-bold text-gray-700">{% trans "الكمية" %}:</label>
+                    <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                        <button type="button" @click="if(quantity > 1) quantity--" 
+                                class="bg-gray-200 px-4 py-2 hover:bg-gray-300 transition">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input type="number" name="quantity" x-model="quantity" min="1" 
+                               class="w-20 text-center py-2 border-0 focus:outline-none" readonly>
+                        <button type="button" @click="quantity++" 
+                                class="bg-gray-200 px-4 py-2 hover:bg-gray-300 transition">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    <p class="text-gray-600">
+                        <i class="fas fa-check-circle text-green-600"></i> 
+                        {% trans "متوفر" %} ({{ perfume.stock_quantity }} {% trans "قطعة" %})
+                    </p>
+                </div>
+                
+                <button type="submit" class="w-full btn-gradient text-white py-4 rounded-lg text-xl font-bold mb-4">
+                    <i class="fas fa-cart-plus"></i> {% trans "أضف إلى السلة" %}
+                </button>
+            </form>
+            {% else %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-4 rounded-lg mb-6">
+                <p class="font-bold flex items-center gap-2">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {% trans "عذراً، هذا المنتج غير متوفر حالياً" %}
+                </p>
+            </div>
+            {% endif %}
+            
+            <div class="grid grid-cols-3 gap-4 text-center">
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <i class="fas fa-shipping-fast text-2xl text-purple-600 mb-2"></i>
+                    <p class="text-sm font-bold">{% trans "شحن سريع" %}</p>
+                </div>
+                <div class="bg-pink-50 p-4 rounded-lg">
+                    <i class="fas fa-certificate text-2xl text-pink-600 mb-2"></i>
+                    <p class="text-sm font-bold">{% trans "أصلي 100%" %}</p>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <i class="fas fa-undo text-2xl text-yellow-600 mb-2"></i>
+                    <p class="text-sm font-bold">{% trans "إرجاع مجاني" %}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Description -->
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-16" data-aos="fade-up">
+        <h2 class="text-3xl font-bold gradient-text mb-6">
+            <i class="fas fa-info-circle"></i> {% trans "الوصف" %}
+        </h2>
+        <p class="text-gray-700 leading-relaxed text-lg">
+            {% if LANGUAGE_CODE == 'ar' %}{{ perfume.description_ar }}{% else %}{{ perfume.description_en }}{% endif %}
+        </p>
+    </div>
+    
+    <!-- Related Products -->
+    {% if related_perfumes %}
+    <div data-aos="fade-up">
+        <h2 class="text-3xl font-bold gradient-text mb-8">
+            <i class="fas fa-heart"></i> {% trans "منتجات ذات صلة" %}
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for perfume in related_perfumes %}
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+                <div class="relative overflow-hidden h-48">
+                    <img src="{{ perfume.image.url }}" alt="{{ perfume.name_ar }}" class="w-full h-full object-cover">
+                    {% if perfume.discount_price %}
+                    <span class="absolute top-2 {% if LANGUAGE_CODE == 'ar' %}left-2{% else %}right-2{% endif %} bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                        -{{ perfume.get_discount_percentage }}%
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-gray-800 mb-2">
+                        {% if LANGUAGE_CODE == 'ar' %}{{ perfume.name_ar }}{% else %}{{ perfume.name_en }}{% endif %}
+                    </h3>
+                    <p class="text-purple-600 font-bold mb-2">
+                        {% if perfume.discount_price %}
+                            {{ perfume.discount_price }}
+                        {% else %}
+                            {{ perfume.price }}
+                        {% endif %}
+                        {% trans "ريال" %}
+                    </p>
+                    <a href="{% url 'perfumes:detail' perfume.slug %}" 
+                       class="block text-center bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition">
+                        {% trans "عرض التفاصيل" %}
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

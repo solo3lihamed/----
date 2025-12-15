@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "إتمام الطلب" %} - عَبَق{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-5xl font-bold gradient-text mb-8 text-center" data-aos="fade-up">
+        <i class="fas fa-check-circle"></i> {% trans "إتمام الطلب" %}
+    </h1>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Order Form -->
+        <div class="lg:col-span-2" data-aos="fade-right">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <h2 class="text-2xl font-bold gradient-text mb-6">
+                    <i class="fas fa-user"></i> {% trans "معلومات التواصل" %}
+                </h2>
+                
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- Customer Name -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">
+                            {% trans "الاسم الكامل" %} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.customer_name }}
+                        {% if form.customer_name.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.customer_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Phone -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">
+                            {% trans "رقم الهاتف" %} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.phone.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Email -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">
+                            {% trans "البريد الإلكتروني" %} <span class="text-gray-400">({% trans "اختياري" %})</span>
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- City -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">
+                            {% trans "المدينة" %} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.city }}
+                        {% if form.city.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.city.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Address -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">
+                            {% trans "العنوان الكامل" %} <span class="text-red-500">*</span>
+                        </label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.address.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Notes -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">
+                            {% trans "ملاحظات إضافية" %} <span class="text-gray-400">({% trans "اختياري" %})</span>
+                        </label>
+                        {{ form.notes }}
+                        {% if form.notes.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.notes.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="bg-blue-100 border border-blue-400 rounded-lg p-4">
+                        <p class="text-blue-800 flex items-center gap-2">
+                            <i class="fas fa-info-circle"></i>
+                            <span>{% trans "سيتم التواصل معك على الرقم المدخل لتأكيد الطلب والتفاصيل" %}</span>
+                        </p>
+                    </div>
+                    
+                    <button type="submit" class="w-full btn-gradient text-white py-4 rounded-lg text-xl font-bold">
+                        <i class="fas fa-check"></i> {% trans "تأكيد الطلب" %}
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <div class="lg:col-span-1" data-aos="fade-left">
+            <div class="bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl shadow-lg p-6 sticky top-24">
+                <h2 class="text-2xl font-bold gradient-text mb-6">
+                    <i class="fas fa-box"></i> {% trans "ملخص الطلب" %}
+                </h2>
+                
+                <!-- Cart Items -->
+                <div class="space-y-4 mb-6">
+                    {% for item in cart %}
+                    <div class="bg-white rounded-lg p-3 flex items-center gap-3">
+                        <img src="{{ item.perfume.image.url }}" alt="{{ item.perfume.name_ar }}" class="w-16 h-16 object-cover rounded">
+                        <div class="flex-grow">
+                            <p class="font-bold text-sm">
+                                {% if LANGUAGE_CODE == 'ar' %}{{ item.perfume.name_ar }}{% else %}{{ item.perfume.name_en }}{% endif %}
+                            </p>
+                            <p class="text-gray-600 text-xs">
+                                {{ item.quantity }} x {{ item.price }} {% trans "ريال" %}
+                            </p>
+                        </div>
+                        <p class="font-bold text-purple-600">
+                            {{ item.total_price }} {% trans "ريال" %}
+                        </p>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Totals -->
+                <div class="space-y-3 mb-6">
+                    <div class="flex justify-between text-gray-700">
+                        <span>{% trans "المجموع الفرعي" %}:</span>
+                        <span class="font-bold">{{ cart.get_total_price }} {% trans "ريال" %}</span>
+                    </div>
+                    
+                    <div class="flex justify-between text-gray-700">
+                        <span>{% trans "الشحن" %}:</span>
+                        <span class="font-bold text-green-600">{% trans "مجاني" %}</span>
+                    </div>
+                    
+                    <div class="border-t-2 border-purple-300 pt-3">
+                        <div class="flex justify-between text-2xl font-bold">
+                            <span>{% trans "الإجمالي" %}:</span>
+                            <span class="gradient-text">{{ cart.get_total_price }} {% trans "ريال" %}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payment Method -->
+                <div class="bg-yellow-100 border border-yellow-400 rounded-lg p-4">
+                    <p class="text-yellow-800 font-bold flex items-center gap-2 mb-2">
+                        <i class="fas fa-money-bill-wave"></i>
+                        {% trans "طريقة الدفع" %}
+                    </p>
+                    <p class="text-yellow-700 text-sm">
+                        {% trans "الدفع عند الاستلام" %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

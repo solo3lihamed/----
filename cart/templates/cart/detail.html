@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "سلة التسوق" %} - عَبَق{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-5xl font-bold gradient-text mb-8 text-center" data-aos="fade-up">
+        <i class="fas fa-shopping-cart"></i> {% trans "سلة التسوق" %}
+    </h1>
+    
+    {% if cart %}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Cart Items -->
+        <div class="lg:col-span-2">
+            {% for item in cart %}
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-4 card-hover" data-aos="fade-right" data-aos-delay="{{ forloop.counter0|multiply:100 }}">
+                <div class="flex items-center gap-6">
+                    <!-- Product Image -->
+                    <div class="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                        <img src="{{ item.perfume.image.url }}" alt="{{ item.perfume.name_ar }}" class="w-full h-full object-cover">
+                    </div>
+                    
+                    <!-- Product Info -->
+                    <div class="flex-grow">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">
+                            {% if LANGUAGE_CODE == 'ar' %}{{ item.perfume.name_ar }}{% else %}{{ item.perfume.name_en }}{% endif %}
+                        </h3>
+                        <p class="text-gray-600 mb-2">
+                            <i class="fas fa-spray-can"></i> {{ item.perfume.size }}
+                        </p>
+                        <p class="text-purple-600 font-bold text-xl">
+                            {{ item.price }} {% trans "ريال" %}
+                        </p>
+                    </div>
+                    
+                    <!-- Quantity & Actions -->
+                    <div class="text-center">
+                        <form method="post" action="{% url 'cart:update' item.perfume.id %}" class="mb-2">
+                            {% csrf_token %}
+                            <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden">
+                                <button type="submit" name="quantity" value="{{ item.quantity|add:'-1' }}" 
+                                        class="bg-gray-200 px-3 py-2 hover:bg-gray-300 transition">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" name="quantity" value="{{ item.quantity }}" 
+                                       class="w-16 text-center py-2 border-0" readonly>
+                                <button type="submit" name="quantity" value="{{ item.quantity|add:'1' }}" 
+                                        class="bg-gray-200 px-3 py-2 hover:bg-gray-300 transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <p class="text-gray-700 font-bold mb-2">
+                            {% trans "الإجمالي" %}: {{ item.total_price }} {% trans "ريال" %}
+                        </p>
+                        
+                        <form method="post" action="{% url 'cart:remove' item.perfume.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="text-red-600 hover:text-red-800 font-bold">
+                                <i class="fas fa-trash"></i> {% trans "حذف" %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <div class="text-center mt-6">
+                <a href="{% url 'cart:clear' %}" class="text-red-600 hover:text-red-800 font-bold">
+                    <i class="fas fa-trash-alt"></i> {% trans "مسح السلة" %}
+                </a>
+            </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <div class="lg:col-span-1">
+            <div class="bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl shadow-lg p-6 sticky top-24" data-aos="fade-left">
+                <h2 class="text-2xl font-bold gradient-text mb-6">
+                    <i class="fas fa-receipt"></i> {% trans "ملخص الطلب" %}
+                </h2>
+                
+                <div class="space-y-4 mb-6">
+                    <div class="flex justify-between text-gray-700">
+                        <span>{% trans "عدد المنتجات" %}:</span>
+                        <span class="font-bold">{{ cart|length }}</span>
+                    </div>
+                    
+                    <div class="flex justify-between text-gray-700">
+                        <span>{% trans "المجموع الفرعي" %}:</span>
+                        <span class="font-bold">{{ cart.get_total_price }} {% trans "ريال" %}</span>
+                    </div>
+                    
+                    <div class="flex justify-between text-gray-700">
+                        <span>{% trans "الشحن" %}:</span>
+                        <span class="font-bold text-green-600">{% trans "مجاني" %}</span>
+                    </div>
+                    
+                    <div class="border-t-2 border-purple-300 pt-4">
+                        <div class="flex justify-between text-2xl font-bold">
+                            <span>{% trans "الإجمالي" %}:</span>
+                            <span class="gradient-text">{{ cart.get_total_price }} {% trans "ريال" %}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-yellow-100 border border-yellow-400 rounded-lg p-4 mb-6">
+                    <p class="text-yellow-800 text-sm flex items-center gap-2">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="font-bold">{% trans "الدفع عند الاستلام متاح" %}</span>
+                    </p>
+                </div>
+                
+                <a href="{% url 'orders:create' %}" class="block w-full btn-gradient text-white py-4 rounded-lg text-xl font-bold text-center mb-4">
+                    <i class="fas fa-check-circle"></i> {% trans "إتمام الطلب" %}
+                </a>
+                
+                <a href="{% url 'perfumes:list' %}" class="block w-full text-center bg-white text-purple-600 py-3 rounded-lg font-bold hover:bg-gray-100 transition">
+                    <i class="fas fa-arrow-{% if LANGUAGE_CODE == 'ar' %}right{% else %}left{% endif %}"></i> {% trans "متابعة التسوق" %}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-20" data-aos="fade-up">
+        <i class="fas fa-shopping-cart text-9xl text-gray-300 mb-8"></i>
+        <h2 class="text-3xl font-bold text-gray-600 mb-4">{% trans "السلة فارغة" %}</h2>
+        <p class="text-gray-500 mb-8">{% trans "لم تقم بإضافة أي منتجات إلى السلة بعد" %}</p>
+        <a href="{% url 'perfumes:list' %}" class="inline-block btn-gradient text-white px-8 py-4 rounded-lg text-xl font-bold">
+            <i class="fas fa-shopping-bag"></i> {% trans "تصفح المنتجات" %}
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

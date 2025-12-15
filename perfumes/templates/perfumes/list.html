@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}{% trans "جميع العطور" %} - عَبَق{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Page Header -->
+    <div class="text-center mb-12" data-aos="fade-up">
+        <h1 class="text-5xl font-bold gradient-text mb-4">
+            {% trans "جميع العطور" %}
+        </h1>
+        <p class="text-gray-600 text-lg">
+            {% trans "اكتشف مجموعتنا الواسعة من العطور الفاخرة" %}
+        </p>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <!-- Filters Sidebar -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-xl shadow-lg p-6 sticky top-24" data-aos="fade-right">
+                <h2 class="text-2xl font-bold mb-6 gradient-text">
+                    <i class="fas fa-filter"></i> {% trans "تصفية النتائج" %}
+                </h2>
+                
+                <form method="get" class="space-y-6">
+                    <!-- Search -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">
+                            <i class="fas fa-search"></i> {% trans "بحث" %}
+                        </label>
+                        <input type="text" name="q" value="{{ request.GET.q }}" 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                               placeholder="{% trans 'ابحث عن عطر...' %}">
+                    </div>
+                    
+                    <!-- Categories -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">
+                            <i class="fas fa-tags"></i> {% trans "الفئة" %}
+                        </label>
+                        <select name="category" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="">{% trans "جميع الفئات" %}</option>
+                            {% for category in categories %}
+                            <option value="{{ category.slug }}" {% if current_category == category.slug %}selected{% endif %}>
+                                {% if LANGUAGE_CODE == 'ar' %}{{ category.name_ar }}{% else %}{{ category.name_en }}{% endif %}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Brands -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">
+                            <i class="fas fa-award"></i> {% trans "العلامة التجارية" %}
+                        </label>
+                        <select name="brand" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="">{% trans "جميع العلامات" %}</option>
+                            {% for brand in brands %}
+                            <option value="{{ brand.id }}" {% if current_brand == brand.id|stringformat:"s" %}selected{% endif %}>
+                                {{ brand.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Price Range -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">
+                            <i class="fas fa-dollar-sign"></i> {% trans "السعر" %}
+                        </label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" name="min_price" value="{{ request.GET.min_price }}" 
+                                   class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   placeholder="{% trans 'من' %}">
+                            <input type="number" name="max_price" value="{{ request.GET.max_price }}" 
+                                   class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                   placeholder="{% trans 'إلى' %}">
+                        </div>
+                    </div>
+                    
+                    <!-- Sort -->
+                    <div>
+                        <label class="block text-gray-700 font-bold mb-2">
+                            <i class="fas fa-sort"></i> {% trans "الترتيب" %}
+                        </label>
+                        <select name="sort" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <option value="">{% trans "افتراضي" %}</option>
+                            <option value="price_low" {% if request.GET.sort == 'price_low' %}selected{% endif %}>{% trans "الأرخص أولاً" %}</option>
+                            <option value="price_high" {% if request.GET.sort == 'price_high' %}selected{% endif %}>{% trans "الأغلى أولاً" %}</option>
+                            <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>{% trans "الأحدث" %}</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="w-full btn-gradient text-white py-3 rounded-lg font-bold">
+                        <i class="fas fa-search"></i> {% trans "تطبيق" %}
+                    </button>
+                    <a href="{% url 'perfumes:list' %}" class="block w-full text-center bg-gray-200 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-300 transition">
+                        <i class="fas fa-redo"></i> {% trans "إعادة تعيين" %}
+                    </a>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Products Grid -->
+        <div class="lg:col-span-3">
+            <div class="mb-6 flex justify-between items-center">
+                <p class="text-gray-600">
+                    {% trans "عرض" %} <span class="font-bold">{{ perfumes.count }}</span> {% trans "منتج" %}
+                </p>
+            </div>
+            
+            {% if perfumes %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for perfume in perfumes %}
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|multiply:50 }}">
+                    <div class="relative overflow-hidden h-64">
+                        <img src="{{ perfume.image.url }}" alt="{{ perfume.name_ar }}" class="w-full h-full object-cover">
+                        {% if perfume.discount_price %}
+                        <span class="absolute top-4 {% if LANGUAGE_CODE == 'ar' %}left-4{% else %}right-4{% endif %} bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold badge-pulse">
+                            -{{ perfume.get_discount_percentage }}%
+                        </span>
+                        {% endif %}
+                        {% if not perfume.in_stock %}
+                        <div class="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
+                            <span class="text-white text-xl font-bold">{% trans "نفذت الكمية" %}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="p-4">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">
+                            {% if LANGUAGE_CODE == 'ar' %}{{ perfume.name_ar }}{% else %}{{ perfume.name_en }}{% endif %}
+                        </h3>
+                        <p class="text-gray-600 text-sm mb-2">
+                            <i class="fas fa-spray-can"></i> {{ perfume.size }}
+                        </p>
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                {% if perfume.discount_price %}
+                                <span class="text-2xl font-bold text-purple-600">{{ perfume.discount_price }} {% trans "ريال" %}</span>
+                                <span class="text-sm text-gray-400 line-through block">{{ perfume.price }} {% trans "ريال" %}</span>
+                                {% else %}
+                                <span class="text-2xl font-bold text-purple-600">{{ perfume.price }} {% trans "ريال" %}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="{% url 'perfumes:detail' perfume.slug %}" class="flex-1 bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition text-center">
+                                {% trans "التفاصيل" %}
+                            </a>
+                            {% if perfume.in_stock %}
+                            <form method="post" action="{% url 'cart:add' perfume.id %}" class="flex-1">
+                                {% csrf_token %}
+                                <button type="submit" class="w-full btn-gradient text-white py-2 rounded-lg">
+                                    <i class="fas fa-cart-plus"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-20">
+                <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
+                <p class="text-2xl text-gray-600 font-bold">{% trans "لا توجد منتجات متاحة" %}</p>
+                <a href="{% url 'perfumes:list' %}" class="inline-block mt-6 btn-gradient text-white px-8 py-3 rounded-lg">
+                    {% trans "عرض جميع المنتجات" %}
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
