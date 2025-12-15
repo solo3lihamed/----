@@ -28,107 +28,108 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static 'css/custom.css' %}" <style>
-    body {
-    font-family: {% if LANGUAGE_CODE == 'ar' %}'Cairo', sans-serif{% else %}'Inter', sans-serif{% endif %};
-    }
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <style>
+        body {
+            font-family: {% if LANGUAGE_CODE == 'ar' %}'Cairo', sans-serif{% else %}'Inter', sans-serif{% endif %};
+        }
 
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-    width: 10px;
-    }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
 
-    ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
 
-    ::-webkit-scrollbar-thumb {
-    background: linear-gradient(to bottom, #8B5CF6, #EC4899);
-    border-radius: 5px;
-    }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #8B5CF6, #EC4899);
+            border-radius: 5px;
+        }
 
-    ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(to bottom, #7C3AED, #DB2777);
-    }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #7C3AED, #DB2777);
+        }
 
-    /* Gradient text */
-    .gradient-text {
-    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F59E0B 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    }
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F59E0B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-    /* Card hover effect */
-    .card-hover {
-    transition: all 0.3s ease;
-    }
+        /* Card hover effect */
+        .card-hover {
+            transition: all 0.3s ease;
+        }
 
-    .card-hover:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
-    }
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+        }
 
-    /* Button gradient */
-    .btn-gradient {
-    background: linear-gradient(135deg, #8B5CF6, #EC4899);
-    transition: all 0.3s ease;
-    }
+        /* Button gradient */
+        .btn-gradient {
+            background: linear-gradient(135deg, #8B5CF6, #EC4899);
+            transition: all 0.3s ease;
+        }
 
-    .btn-gradient:hover {
-    background: linear-gradient(135deg, #7C3AED, #DB2777);
-    transform: scale(1.05);
-    }
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #7C3AED, #DB2777);
+            transform: scale(1.05);
+        }
 
-    /* Animated background */
-    .animated-bg {
-    background: linear-gradient(-45deg, #8B5CF6, #EC4899, #F59E0B, #8B5CF6);
-    background-size: 400% 400%;
-    animation: gradient 15s ease infinite;
-    }
+        /* Animated background */
+        .animated-bg {
+            background: linear-gradient(-45deg, #8B5CF6, #EC4899, #F59E0B, #8B5CF6);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
 
-    @keyframes gradient {
-    0% {
-    background-position: 0% 50%;
-    }
-    50% {
-    background-position: 100% 50%;
-    }
-    100% {
-    background-position: 0% 50%;
-    }
-    }
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
 
-    /* Badge animation */
-    .badge-pulse {
-    animation: pulse 2s infinite;
-    }
+        /* Badge animation */
+        .badge-pulse {
+            animation: pulse 2s infinite;
+        }
 
-    @keyframes pulse {
-    0%, 100% {
-    opacity: 1;
-    }
-    50% {
-    opacity: 0.5;
-    }
-    }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
 
-    /* Cart counter */
-    .cart-counter {
-    position: absolute;
-    top: -8px;
-    {% if LANGUAGE_CODE == 'ar' %}left: -8px;{% else %}right: -8px;{% endif %}
-    background: #EC4899;
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: bold;
-    }
+        /* Cart counter */
+        .cart-counter {
+            position: absolute;
+            top: -8px;
+            {% if LANGUAGE_CODE == 'ar' %}left: -8px;{% else %}right: -8px;{% endif %}
+            background: #EC4899;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
     </style>
 
     {% block extra_css %}{% endblock %}
