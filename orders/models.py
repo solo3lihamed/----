@@ -101,4 +101,6 @@ class OrderItem(models.Model):
 
     def get_total(self):
         """حساب إجمالي العنصر"""
+        if self.price is None:
+            return 0
         return self.quantity * self.price
