@@ -148,5 +148,5 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 86400 * 7  # 7 days
 
 # Authentication settings
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/orders/profile/'
 LOGOUT_REDIRECT_URL = '/'

@@ -101,3 +101,15 @@ def order_detail(request, order_number):
         'order': order,
     }
     return render(request, 'orders/detail.html', context)
+
+
+@login_required
+def profile(request):
+    """صفحة الملف الشخصي للمستخدم"""
+    user = request.user
+    orders = Order.objects.filter(user=user).order_by('-created_at')
+    context = {
+        'user': user,
+        'orders': orders,
+    }
+    return render(request, 'orders/profile.html', context)
