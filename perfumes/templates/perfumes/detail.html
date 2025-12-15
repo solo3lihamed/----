@@ -18,10 +18,19 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
         <!-- Images -->
         <div data-aos="fade-right">
+            {% if perfume.image %}
             <div x-data="{ activeImage: '{{ perfume.image.url }}' }">
                 <!-- Main Image -->
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-4 relative">
                     <img :src="activeImage" alt="{{ perfume.name_ar }}" class="w-full h-96 object-cover">
+            {% else %}
+            <div x-data="{ activeImage: '' }">
+                <!-- Main Image -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-4 relative">
+                    <div class="w-full h-96 bg-gray-200 flex items-center justify-center">
+                        <span class="text-gray-500 text-xl">{% trans "لا صورة" %}</span>
+                    </div>
+            {% endif %}
                     {% if perfume.discount_price %}
                     <span class="absolute top-4 {% if LANGUAGE_CODE == 'ar' %}left-4{% else %}right-4{% endif %} bg-red-500 text-white px-4 py-2 rounded-full text-lg font-bold badge-pulse">
                         -{{ perfume.get_discount_percentage }}%
@@ -36,18 +45,26 @@
                 
                 <!-- Thumbnails -->
                 <div class="grid grid-cols-3 gap-4">
-                    <div @click="activeImage = '{{ perfume.image.url }}'" 
+                    {% if perfume.image %}
+                    <div @click="activeImage = '{{ perfume.image.url }}'"
                          class="cursor-pointer border-2 border-purple-600 rounded-lg overflow-hidden">
                         <img src="{{ perfume.image.url }}" alt="{{ perfume.name_ar }}" class="w-full h-24 object-cover">
                     </div>
+                    {% else %}
+                    <div class="cursor-pointer border-2 border-purple-600 rounded-lg overflow-hidden opacity-50">
+                        <div class="w-full h-24 bg-gray-200 flex items-center justify-center">
+                            <span class="text-gray-500 text-sm">{% trans "لا صورة" %}</span>
+                        </div>
+                    </div>
+                    {% endif %}
                     {% if perfume.image2 %}
-                    <div @click="activeImage = '{{ perfume.image2.url }}'" 
+                    <div @click="activeImage = '{{ perfume.image2.url }}'"
                          class="cursor-pointer border-2 border-gray-300 hover:border-purple-600 rounded-lg overflow-hidden transition">
                         <img src="{{ perfume.image2.url }}" alt="{{ perfume.name_ar }}" class="w-full h-24 object-cover">
                     </div>
                     {% endif %}
                     {% if perfume.image3 %}
-                    <div @click="activeImage = '{{ perfume.image3.url }}'" 
+                    <div @click="activeImage = '{{ perfume.image3.url }}'"
                          class="cursor-pointer border-2 border-gray-300 hover:border-purple-600 rounded-lg overflow-hidden transition">
                         <img src="{{ perfume.image3.url }}" alt="{{ perfume.name_ar }}" class="w-full h-24 object-cover">
                     </div>
@@ -176,7 +193,13 @@
             {% for perfume in related_perfumes %}
             <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
                 <div class="relative overflow-hidden h-48">
+                    {% if perfume.image %}
                     <img src="{{ perfume.image.url }}" alt="{{ perfume.name_ar }}" class="w-full h-full object-cover">
+                    {% else %}
+                    <div class="w-full h-full object-cover bg-gray-200 flex items-center justify-center">
+                        <span class="text-gray-500">{% trans "لا صورة" %}</span>
+                    </div>
+                    {% endif %}
                     {% if perfume.discount_price %}
                     <span class="absolute top-2 {% if LANGUAGE_CODE == 'ar' %}left-2{% else %}right-2{% endif %} bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
                         -{{ perfume.get_discount_percentage }}%

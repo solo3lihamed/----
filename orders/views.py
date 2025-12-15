@@ -29,11 +29,19 @@ def order_create(request):
             # إنشاء عناصر الطلب
             for item in cart:
                 perfume = item['perfume']
+                perfume_image_url = ''
+                if perfume.image and hasattr(perfume.image, 'url'):
+                    try:
+                        perfume_image_url = perfume.image.url
+                    except ValueError:
+                        # If there's no file associated with the image, leave it empty
+                        perfume_image_url = ''
+
                 OrderItem.objects.create(
                     order=order,
                     perfume_name_ar=perfume.name_ar,
                     perfume_name_en=perfume.name_en,
-                    perfume_image=perfume.image.url if perfume.image else '',
+                    perfume_image=perfume_image_url,
                     quantity=item['quantity'],
                     price=item['price'],
                     size=perfume.size

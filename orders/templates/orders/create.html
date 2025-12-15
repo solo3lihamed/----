@@ -112,7 +112,13 @@
                 <div class="space-y-4 mb-6">
                     {% for item in cart %}
                     <div class="bg-white rounded-lg p-3 flex items-center gap-3">
+                        {% if item.perfume.image %}
                         <img src="{{ item.perfume.image.url }}" alt="{{ item.perfume.name_ar }}" class="w-16 h-16 object-cover rounded">
+                        {% else %}
+                        <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
+                            <span class="text-gray-500 text-xs">{% trans "لا صورة" %}</span>
+                        </div>
+                        {% endif %}
                         <div class="flex-grow">
                             <p class="font-bold text-sm">
                                 {% if LANGUAGE_CODE == 'ar' %}{{ item.perfume.name_ar }}{% else %}{{ item.perfume.name_en }}{% endif %}

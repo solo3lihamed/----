@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load custom_filters %}
 
 {% block title %}{% trans "سلة التسوق" %} - عَبَق{% endblock %}
 
@@ -19,7 +20,13 @@
                 <div class="flex items-center gap-6">
                     <!-- Product Image -->
                     <div class="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                        {% if item.perfume.image %}
                         <img src="{{ item.perfume.image.url }}" alt="{{ item.perfume.name_ar }}" class="w-full h-full object-cover">
+                        {% else %}
+                        <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                            <span class="text-gray-500 text-xs">{% trans "لا صورة" %}</span>
+                        </div>
+                        {% endif %}
                     </div>
                     
                     <!-- Product Info -->

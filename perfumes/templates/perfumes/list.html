@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load custom_filters %}
 
 {% block title %}{% trans "جميع العطور" %} - عَبَق{% endblock %}
 
@@ -116,7 +117,13 @@
                 {% for perfume in perfumes %}
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover" data-aos="fade-up" data-aos-delay="{{ forloop.counter0|multiply:50 }}">
                     <div class="relative overflow-hidden h-64">
+                        {% if perfume.image %}
                         <img src="{{ perfume.image.url }}" alt="{{ perfume.name_ar }}" class="w-full h-full object-cover">
+                        {% else %}
+                        <div class="w-full h-full object-cover bg-gray-200 flex items-center justify-center">
+                            <span class="text-gray-500">{% trans "لا صورة" %}</span>
+                        </div>
+                        {% endif %}
                         {% if perfume.discount_price %}
                         <span class="absolute top-4 {% if LANGUAGE_CODE == 'ar' %}left-4{% else %}right-4{% endif %} bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold badge-pulse">
                             -{{ perfume.get_discount_percentage }}%

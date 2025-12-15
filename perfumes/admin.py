@@ -19,7 +19,11 @@ class BrandAdmin(admin.ModelAdmin):
 
     def logo_preview(self, obj):
         if obj.logo:
-            return format_html('<img src="{}" width="50" height="50" style="object-fit: cover; border-radius: 5px;" />', obj.logo.url)
+            try:
+                return format_html('<img src="{}" width="50" height="50" style="object-fit: cover; border-radius: 5px;" />', obj.logo.url)
+            except ValueError:
+                # If there's no file associated with the logo, return a placeholder
+                return format_html('<div style="width:50px; height:50px; background-color:#f0f0f0; display:flex; align-items:center; justify-content:center; border-radius:5px;">-</div>')
         return '-'
     logo_preview.short_description = 'الشعار'
 
@@ -57,17 +61,32 @@ class PerfumeAdmin(admin.ModelAdmin):
 
     def image_preview(self, obj):
         if obj.image:
-            return format_html('<img src="{}" width="50" height="50" style="object-fit: cover; border-radius: 5px;" />', obj.image.url)
+            try:
+                return format_html('<img src="{}" width="50" height="50" style="object-fit: cover; border-radius: 5px;" />', obj.image.url)
+            except ValueError:
+                # If there's no file associated with the image, return a placeholder
+                return format_html('<div style="width:50px; height:50px; background-color:#f0f0f0; display:flex; align-items:center; justify-content:center; border-radius:5px;">-</div>')
         return '-'
     image_preview.short_description = 'صورة'
 
     def image_large_preview(self, obj):
+        html = ''
         if obj.image:
-            html = f'<img src="{obj.image.url}" width="200" style="border-radius: 10px; margin: 5px;" />'
-            if obj.image2:
+            try:
+                html += f'<img src="{obj.image.url}" width="200" style="border-radius: 10px; margin: 5px;" />'
+            except ValueError:
+                html += '<div style="width:200px; height:200px; background-color:#f0f0f0; display:flex; align-items:center; justify-content:center; border-radius:10px; margin: 5px;">No Image</div>'
+        if obj.image2:
+            try:
                 html += f'<img src="{obj.image2.url}" width="200" style="border-radius: 10px; margin: 5px;" />'
-            if obj.image3:
+            except ValueError:
+                html += '<div style="width:200px; height:200px; background-color:#f0f0f0; display:flex; align-items:center; justify-content:center; border-radius:10px; margin: 5px;">No Image</div>'
+        if obj.image3:
+            try:
                 html += f'<img src="{obj.image3.url}" width="200" style="border-radius: 10px; margin: 5px;" />'
+            except ValueError:
+                html += '<div style="width:200px; height:200px; background-color:#f0f0f0; display:flex; align-items:center; justify-content:center; border-radius:10px; margin: 5px;">No Image</div>'
+        if html:
             return format_html(html)
         return '-'
     image_large_preview.short_description = 'معاينة الصور'
