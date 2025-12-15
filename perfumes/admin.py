@@ -23,7 +23,8 @@ class BrandAdmin(admin.ModelAdmin):
                 return format_html('<img src="{}" width="50" height="50" style="object-fit: cover; border-radius: 5px;" />', obj.logo.url)
             except ValueError:
                 # If there's no file associated with the logo, return a placeholder
-                return format_html('<div style="width:50px; height:50px; background-color:#f0f0f0; display:flex; align-items:center; justify-content:center; border-radius:5px;">-</div>')
+                from django.utils.safestring import mark_safe
+                return mark_safe('<div style="width:50px; height:50px; background-color:#f0f0f0; display:flex; align-items:center; justify-content:center; border-radius:5px;">-</div>')
         return '-'
     logo_preview.short_description = 'الشعار'
 
@@ -65,11 +66,13 @@ class PerfumeAdmin(admin.ModelAdmin):
                 return format_html('<img src="{}" width="50" height="50" style="object-fit: cover; border-radius: 5px;" />', obj.image.url)
             except ValueError:
                 # If there's no file associated with the image, return a placeholder
-                return format_html('<div style="width:50px; height:50px; background-color:#f0f0f0; display:flex; align-items:center; justify-content:center; border-radius:5px;">-</div>')
+                from django.utils.safestring import mark_safe
+                return mark_safe('<div style="width:50px; height:50px; background-color:#f0f0f0; display:flex; align-items:center; justify-content:center; border-radius:5px;">-</div>')
         return '-'
     image_preview.short_description = 'صورة'
 
     def image_large_preview(self, obj):
+        from django.utils.safestring import mark_safe
         html = ''
         if obj.image:
             try:
@@ -87,7 +90,7 @@ class PerfumeAdmin(admin.ModelAdmin):
             except ValueError:
                 html += '<div style="width:200px; height:200px; background-color:#f0f0f0; display:flex; align-items:center; justify-content:center; border-radius:10px; margin: 5px;">No Image</div>'
         if html:
-            return format_html(html)
+            return mark_safe(html)
         return '-'
     image_large_preview.short_description = 'معاينة الصور'
 
